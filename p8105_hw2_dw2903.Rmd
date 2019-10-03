@@ -1,8 +1,84 @@
 ---
 title: "p8105_hw2_dw2903"
 author: Di Wu
-date:October 04, 2019
+date: October 04, 2019
 output: github_document
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# Question 1
+### read and clean Mr. Trash Whell sheet
+```{r}
+ds = 
+  readxl::read_excel("./hw2_data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", range= "A2:N408") %>%
+  janitor::clean_names() %>%
+  
+  mutate(
+    sports_balls = as.integer(sports_balls)) %>%
+  drop_na(dumpster) %>%
+  pivot_longer(
+    plastic_bottles:homes_powered,
+    names_to = "category",
+    values_to = "numbers"
+  ) %>%
+  view()
+```
+### Read and clean 2017 precipitation 
+```{r}
+precipitation_17 = 
+  readxl::read_excel("./hw2_data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = 6, range = "A2:B14") %>%
+  janitor::clean_names() %>%
+  drop_na(month) %>%
+  mutate(
+    year = 2017,
+    month = month.name
+  ) %>%
+  select(year, month, precipitation = total) %>%
+  view()
+```
+### Read and clean 2018 precipitation
+```{r}
+precipitation_18 = 
+  readxl::read_excel("./hw2_data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = 5, range = "A2:B14") %>%
+  janitor::clean_names() %>%
+  drop_na(month) %>%
+  mutate(
+    year = 2018,
+    month= month.name
+  ) %>%
+  select(year, month, precipitation = total) %>%
+  view()
+```
+### combine precipitation
+```{r}
+precipitation = full_join(
+  precipitation_17, precipitation_18)
+
+```
+
+
+# Question 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
