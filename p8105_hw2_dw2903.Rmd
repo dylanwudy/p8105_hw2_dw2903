@@ -16,7 +16,6 @@ library(tidyverse)
 MrWheel = 
   readxl::read_excel("./hw2_data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", range= "A2:N408") %>%
   janitor::clean_names() %>%
-  
   mutate(
     sports_balls = as.integer(sports_balls)) %>%
   drop_na(dumpster) %>%
@@ -25,8 +24,8 @@ MrWheel =
     names_to = "category",
     values_to = "numbers"
   ) 
-
 ```
+
 ### Read and clean 2017 precipitation 
 ```{r}
 precipitation_17 = 
@@ -37,7 +36,6 @@ precipitation_17 =
     year = 2017
   ) %>%
   select(year, month, precipitation = total)
-
 ```
 ### Read and clean 2018 precipitation
 ```{r}
@@ -49,7 +47,6 @@ precipitation_18 =
     year = 2018
   ) %>%
   select(year, month, precipitation = total) 
-
 ```
 ### combine precipitation
 ```{r}
@@ -59,9 +56,9 @@ precipitation = full_join(
     month = as.factor(as.integer(month)),
     month = factor(month.name[month],levels = month.name[1:12]) 
   )
-
 ```
 
+Mr. Trash Wheel represent the trash disposal through 2014.May to 2019. June. It not only indicated the weight and volume of the trash but also showed the amounts of different categories of trash as key variables in the table. Turning to the precipitation from 2017 to 2018, the key variables are the dates as well as the precipitation amount that showed the change of precipitation through time more visually.  The total precipitation in 2018 was 70.33 inches and the mean precipitation in 2017 is 2.145 inches as calculated from the data in the table.
 
 # Question 2
 ### pols_month
@@ -84,7 +81,6 @@ pols=
   filter(president !="prez_dem")%>%
   filter(president !="prez_gop")%>%
   select(-day)
-
 ```
 
 ### snp
@@ -101,8 +97,6 @@ snp =
     month = factor(month.name[month],levels = month.name[1:12]) 
   ) %>%
   select(year, month, snp= close)
-
-  
 ```
 ### unemployment
 ```{r}
@@ -127,6 +121,7 @@ combination =
 
 ```
 
+The pols data set consists of numbers of republican and democratic governors, senators, representatives as well as the president condition from January 15th, 1947 to June 15th, 2015. The processed data only contained the numbers of government officers in different position in republican and democratic with their corresponding years and months. Snp data represent the S&P stock market index through January 3rd, 1950 to July 1st, 2015. After cleaning, the dataset contains only month and year as well as the stock price.  Unemployment data includes the each months’ unemployment rates through 1948 to 2015 and the dataset was arranged in the order of year, month and unemployment rates after cleaning. 
 
 # Question 3
 ### clean data
