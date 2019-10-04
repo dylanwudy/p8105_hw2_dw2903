@@ -13,7 +13,7 @@ library(tidyverse)
 # Question 1
 ### read and clean Mr. Trash Whell sheet
 ```{r}
-ds = 
+MrWheel = 
   readxl::read_excel("./hw2_data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", range= "A2:N408") %>%
   janitor::clean_names() %>%
   
@@ -24,8 +24,7 @@ ds =
     plastic_bottles:homes_powered,
     names_to = "category",
     values_to = "numbers"
-  ) %>%
-  view()
+  ) 
 
 ```
 ### Read and clean 2017 precipitation 
@@ -37,8 +36,7 @@ precipitation_17 =
   mutate(
     year = 2017
   ) %>%
-  select(year, month, precipitation = total)%>%
-  view()
+  select(year, month, precipitation = total)
 
 ```
 ### Read and clean 2018 precipitation
@@ -50,8 +48,7 @@ precipitation_18 =
   mutate(
     year = 2018
   ) %>%
-  select(year, month, precipitation = total) %>%
-  view()
+  select(year, month, precipitation = total) 
 
 ```
 ### combine precipitation
@@ -61,8 +58,7 @@ precipitation = full_join(
   mutate(
     month = as.factor(as.integer(month)),
     month = factor(month.name[month],levels = month.name[1:12]) 
-  )%>%
-  view()
+  )
 
 ```
 
@@ -87,8 +83,7 @@ pols=
   ) %>%
   filter(president !="prez_dem")%>%
   filter(president !="prez_gop")%>%
-  select(-day)%>%
-  view()
+  select(-day)
 
 ```
 
@@ -105,8 +100,7 @@ snp =
     month = as.factor(month),
     month = factor(month.name[month],levels = month.name[1:12]) 
   ) %>%
-  select(year, month, snp= close)%>%
-  view()
+  select(year, month, snp= close)
 
   
 ```
@@ -121,8 +115,7 @@ unemployment =
   )%>%
   select(
     year = Year,everything()
-  )%>%
-  view()
+  )
 
 
 ```
@@ -130,8 +123,7 @@ unemployment =
 ```{r}
 combination = 
   left_join(pols,snp, by= c("year", "month")) %>%
-  left_join(unemployment, by=c("year","month"))%>%
-  view()
+  left_join(unemployment, by=c("year","month"))
 
 ```
 
@@ -153,8 +145,7 @@ name =
     count = as.integer(count),
     rank = as.integer(rank)
   )%>%
-  distinct()%>%
-  view()
+  distinct()
 
 
 ```
@@ -169,8 +160,7 @@ Olivia_rank =
   pivot_wider(
     names_from = "ethnicity",
     values_from = "rank"
-  ) %>%
-  view()
+  ) 
 
 ```
 
@@ -191,8 +181,7 @@ male_rank =
   filter(
     child_s_first_name == child_s_first_name[1]
   ) %>%
-  select( -rank_total) %>%
-  view()
+  select( -rank_total) 
 ```
 ### 2016, white non-hispanic children male
 ```{r}
