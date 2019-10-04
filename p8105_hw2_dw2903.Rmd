@@ -26,6 +26,7 @@ ds =
     values_to = "numbers"
   ) %>%
   view()
+
 ```
 ### Read and clean 2017 precipitation 
 ```{r}
@@ -34,11 +35,11 @@ precipitation_17 =
   janitor::clean_names() %>%
   drop_na(month) %>%
   mutate(
-    year = 2017,
-    month = month.name
+    year = 2017
   ) %>%
-  select(year, month, precipitation = total) %>%
+  select(year, month, precipitation = total)%>%
   view()
+
 ```
 ### Read and clean 2018 precipitation
 ```{r}
@@ -47,21 +48,189 @@ precipitation_18 =
   janitor::clean_names() %>%
   drop_na(month) %>%
   mutate(
-    year = 2018,
-    month= month.name
+    year = 2018
   ) %>%
   select(year, month, precipitation = total) %>%
   view()
+
 ```
 ### combine precipitation
 ```{r}
 precipitation = full_join(
-  precipitation_17, precipitation_18)
+  precipitation_17, precipitation_18)%>%
+  mutate(
+    month = as.factor(as.integer(month)),
+    month = factor(month.name[month],levels = month.name[1:12]) 
+  )%>%
+  view()
 
 ```
 
 
 # Question 2
+### pols_month
+```{r}
+pols= 
+  read.csv("./hw2_data/pols-month.csv") %>%
+  janitor::clean_names() %>%
+  separate(col=mon, into= c("year","month","day")) %>%
+  mutate(
+    year = as.integer(year),
+    day = as.integer(day),
+    month = as.factor(as.integer(month)),
+    month = factor(month.name[month],levels = month.name[1:12]) 
+  ) %>% 
+  pivot_longer(
+    cols = prez_gop:rep_dem,
+    names_to = "president",
+    values_to = "number"
+  ) %>%
+  filter(president !="prez_dem")%>%
+  filter(president !="prez_gop")%>%
+  select(-day)%>%
+  view()
+
+```
+
+### snp
+```{r}
+snp = 
+  read.csv("./hw2_data/snp.csv") %>%
+  janitor::clean_names()%>%
+  separate(col=date, into=c("month","day","year")) %>%
+  mutate(
+    year = as.integer(year),
+    day = as.integer(day),
+    month = as.integer(month),
+    month = as.factor(month),
+    month = factor(month.name[month],levels = month.name[1:12]) 
+  ) %>%
+  select(year, month, snp= close)%>%
+  view()
+
+  
+```
+### unemployment
+```{r}
+unemployment = 
+  read.csv("./hw2_data/unemployment.csv") %>%
+  pivot_longer(
+    cols = Jan:Dec,
+    names_to = "month",
+    values_to = "unemployment"
+  )%>%
+  select(
+    year = Year,everything()
+  )%>%
+  view()
+
+
+```
+### combination
+```{r}
+combination = 
+  left_join(pols,snp, by= c("year", "month")) %>%
+  left_join(unemployment, by=c("year","month"))%>%
+  view()
+
+```
+
+
+# Question 3
+### clean data
+```{r}
+name = 
+  read.csv('./hw2_data/Popular_Baby_Names.csv') %>%
+  janitor::clean_names() %>%
+  mutate(
+    child_s_first_name = str_to_lower(child_s_first_name),
+    year_of_birth = as.integer(year_of_birth),
+    gender =as.factor(str_to_lower(gender)),
+    ethnicity = as.factor( str_to_lower(ethnicity)),
+    ethnicity = recode(ethnicity, "asian and paci"="asian and pacific islander", 
+                       "black non hisp" = "black non hispanic",
+                       "white non hisp" = "white non hispanic"),
+    count = as.integer(count),
+    rank = as.integer(rank)
+  )%>%
+  distinct()%>%
+  view()
+
+
+```
+factor(month.name[month],levels = month.name[1:12]) 
+### rank of olivia in female
+```{r}
+Olivia_rank =
+  filter(name, child_s_first_name == "olivia",
+         gender == "female"
+         )%>%
+  select(year_of_birth, ethnicity, rank)%>%
+  pivot_wider(
+    names_from = "ethnicity",
+    values_from = "rank"
+  ) %>%
+  view()
+
+```
+
+### most popular name among male
+```{r}
+male_rank = 
+  filter(name, gender == "male") %>%
+  select(child_s_first_name, year_of_birth, ethnicity, rank) %>%
+  pivot_wider(
+    names_from = "ethnicity",
+    values_from = "rank"
+  ) %>%
+  janitor::clean_names() %>%
+  mutate(
+    rank_total = asian_and_pacific_islander+ black_non_hispanic+ hispanic+ white_non_hispanic
+  ) %>%
+  arrange(rank_total) %>%
+  filter(
+    child_s_first_name == child_s_first_name[1]
+  ) %>%
+  select( -rank_total) %>%
+  view()
+```
+### 2016, white non-hispanic children male
+```{r}
+male_16_wnh = 
+  filter(name, gender == "male", ethnicity == "white non hispanic", year_of_birth == 2016) %>%
+  select(child_s_first_name, ethnicity, count, rank)
+ggplot(male_16_wnh, aes(y=count, x=rank))+geom_point()
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
